@@ -1,15 +1,19 @@
 import {useEffect, useState} from 'react'
 import {VIDEO_API} from './constant'
 import axios from 'axios'
+import {useDispatch} from 'react-redux'
+import {setVideos} from './Slice/appSlice'
 
-const useVideos = () => {
+export const useVideos = () => {
     const [videoInfo, setVideoInfo] = useState()
+    const dispatch =  useDispatch()
 
      const getApiData = async() => {
          try{
             const res = await axios.get(VIDEO_API)
-            const videoArray = res?.data?.items
-            setVideoInfo(videoArray)
+            const items = res?.data?.items
+            setVideoInfo(items)
+            dispatch(setVideos(items))
          }
          catch(err){
             console.error(err)
@@ -17,19 +21,14 @@ const useVideos = () => {
      
     }
     useEffect(() => {
-        // axios.get(VIDEO_API)
-        // .then((res)=>{
-           
-        //     const videoArray = res?.data?.items
-        //     console.log(videoArray,"res")
-        //     setVideoInfo(videoArray)
-        // })
-        // .catch((err)=>{console.log(err,"err")})
-        getApiData()
+       getApiData()
        
     }, [])
 
-    return videoInfo
+    // const updateVideoInfo = (newVideoInfo) => {
+    //     setVideoInfo(newVideoInfo);
+    // };
+
+    return { videoInfo, setVideoInfo };
 }
 
-export default useVideos
